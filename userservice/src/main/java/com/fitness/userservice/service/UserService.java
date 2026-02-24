@@ -17,8 +17,8 @@ import java.util.UUID;
 @Service
 public class UserService {
 
-    private UserRepository repository;
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Constructor for dependency injection of repository and password encoder.
