@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.UUID;
 
 /**
- * Data Transfer Object (DTO) for activity tracking requests.
- * Contains the necessary fields for tracking a new activity.
+ * Data Transfer Object for activity creation requests.
+ * Encapsulates the data required to create a new activity.
  */
 @Data
 @AllArgsConstructor

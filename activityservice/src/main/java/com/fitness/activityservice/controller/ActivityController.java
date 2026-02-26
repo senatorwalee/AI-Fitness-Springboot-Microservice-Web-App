@@ -3,18 +3,18 @@ package com.fitness.activityservice.controller;
 import com.fitness.activityservice.dtos.ActivityRequest;
 import com.fitness.activityservice.dtos.ActivityResponse;
 import com.fitness.activityservice.service.ActivityService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
- * REST controller for activity-related endpoints.
- * Handles tracking, retrieval, and listing of user activities.
+ * REST controller for handling activity-related API endpoints.
+ * Provides endpoints for creating, retrieving, and managing activities.
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/activities")
 public class ActivityController {
     /**
@@ -22,13 +22,7 @@ public class ActivityController {
      */
     private final ActivityService activityService;
 
-    /**
-     * Constructor for dependency injection of ActivityService.
-     * @param activityService ActivityService instance
-     */
-    public ActivityController(ActivityService activityService){
-        this.activityService = activityService;
-    }
+
 
     /**
      * Tracks a new activity for a user.

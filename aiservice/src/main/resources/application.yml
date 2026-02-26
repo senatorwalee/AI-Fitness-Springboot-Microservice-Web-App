@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: AISERVICE
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/fitnessrecommendations
+      database: fitnessrecommendations
+      uuid-representation: standard
+
+server:
+  port: 8084
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

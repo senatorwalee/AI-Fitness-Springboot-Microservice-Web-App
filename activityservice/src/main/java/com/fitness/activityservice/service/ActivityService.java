@@ -4,7 +4,7 @@ import com.fitness.activityservice.dtos.ActivityRequest;
 import com.fitness.activityservice.dtos.ActivityResponse;
 import com.fitness.activityservice.model.Activity;
 import com.fitness.activityservice.repository.ActivityRepository;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +12,11 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * Service class for activity-related business logic.
- * Handles tracking, retrieval, and mapping of user activities.
+ * Service class for handling business logic related to activities.
+ * Provides methods for creating, retrieving, and managing activity records.
  */
 @Service
+@RequiredArgsConstructor
 public class ActivityService {
     /**
      * Logger for activity service operations.
@@ -26,13 +27,7 @@ public class ActivityService {
      */
     private final ActivityRepository activityRepository;
 
-    /**
-     * Constructor for dependency injection of ActivityRepository.
-     * @param activityRepository ActivityRepository instance
-     */
-    public ActivityService(ActivityRepository activityRepository){
-        this.activityRepository  = activityRepository;
-    }
+    private final UserValidationService userValidationService;
 
     /**
      * Tracks a new activity for a user.
@@ -41,6 +36,10 @@ public class ActivityService {
      */
     public ActivityResponse trackActivity(ActivityRequest request){
         logger.info("Received activity tracking request: {}", request);
+        boolean isValidUser = userValidationService.validateUser(request.getUserId());
+        if(!isValidUser){
+            throw new RuntimeException("User " + request.getUserId() + " is not a valid user");
+        }
         Activity activity = Activity.builder()
                 .userId(request.getUserId()) // userId is now String
                 .type(request.getType())

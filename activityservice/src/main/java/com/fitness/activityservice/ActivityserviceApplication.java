@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Main class for the Activity Service Spring Boot application.
- * Starts the application context and runs the service.
+ * Starts the application context and initializes all components.
  */
 @SpringBootApplication
 public class ActivityserviceApplication {

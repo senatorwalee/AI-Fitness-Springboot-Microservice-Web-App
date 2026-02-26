@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
- * Entity class representing a user activity.
+ * Entity class representing an activity record in the system.
+ * Contains details such as userId, type, duration, calories burned, and additional metrics.
  * Maps to the 'activities' collection in MongoDB.
  */
 @Document(collection = "activities")

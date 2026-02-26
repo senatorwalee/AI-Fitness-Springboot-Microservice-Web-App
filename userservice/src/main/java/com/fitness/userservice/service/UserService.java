@@ -4,6 +4,7 @@ import com.fitness.userservice.dtos.RegisterRequest;
 import com.fitness.userservice.dtos.UserResponse;
 import com.fitness.userservice.model.User;
 import com.fitness.userservice.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.UUID;
  * Handles user registration and profile retrieval.
  */
 @Service
+@Slf4j
 public class UserService {
 
     private final UserRepository repository;
@@ -78,4 +80,11 @@ public class UserService {
         return userResponse;
 
     }
+
+    public boolean existByUserId(UUID userId){
+        log.info("Calling User Validation API for userId: {}", userId);
+        return repository.existsById(userId);
+    }
+
 }
+

@@ -6,8 +6,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 /**
- * Repository interface for Activity entity.
- * Extends MongoRepository to provide CRUD operations for Activity objects.
+ * Repository interface for Activity entities.
+ * Extends MongoRepository to provide CRUD operations for activities.
  */
 public interface ActivityRepository extends MongoRepository<Activity, String> {
     /**

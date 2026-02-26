@@ -1,7 +1,7 @@
 package com.fitness.activityservice.model;
 
 /**
- * Enum representing the types of activities a user can perform.
+ * Enum representing the different types of activities that can be tracked.
  */
 public enum ActivityType {
     RUNNING,      // Running activity

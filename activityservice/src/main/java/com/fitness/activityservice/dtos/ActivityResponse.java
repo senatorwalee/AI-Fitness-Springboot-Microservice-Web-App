@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
- * Data Transfer Object (DTO) for activity tracking responses.
- * Contains the fields returned after tracking an activity.
+ * Data Transfer Object for activity response payloads.
+ * Encapsulates the data returned to clients after activity operations.
  */
 @Data
 public class ActivityResponse {
