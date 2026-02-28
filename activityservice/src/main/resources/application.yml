@@ -1,17 +1,38 @@
+# -----------------------------------------------------------------------------
+# Spring Boot application configuration for the Activity Service
+# -----------------------------------------------------------------------------
 spring:
   application:
-    name: activityservice
+    name: activityservice  # Name of this microservice for service discovery
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/fitnessactivity
-      database: fitnessactivity
-      uuid-representation : standard
-
+      uri: mongodb://localhost:27017/fitnessactivity  # MongoDB connection URI
+      database: fitnessactivity                      # Database name
+      uuid-representation : standard                 # Use standard UUID representation
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 server:
-  port: 8083
+  port: 8083  # Port on which the Activity Service runs
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/  # Eureka server URL for service registration
+
+rabbitmq:
+  exchange:
+    name: fitness.exchange      # RabbitMQ exchange name for activity events
+  queue:
+    name: activity.queue           # RabbitMQ queue name for activity tracking
+  routing:
+    key: activity.tracking      # RabbitMQ routing key for activity tracking
+
+logging:
+  level:
+    org.springframework.amqp: DEBUG
+    org.springframework.amqp.rabbit: DEBUG
+    com.rabbitmq: DEBUG

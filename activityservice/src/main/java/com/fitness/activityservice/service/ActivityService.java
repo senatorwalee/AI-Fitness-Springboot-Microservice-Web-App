@@ -4,7 +4,10 @@ import com.fitness.activityservice.dtos.ActivityRequest;
 import com.fitness.activityservice.dtos.ActivityResponse;
 import com.fitness.activityservice.model.Activity;
 import com.fitness.activityservice.repository.ActivityRepository;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +31,11 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
 
     private final UserValidationService userValidationService;
+    private final RabbitTemplate rabbitTemplate;
+    @Value("${rabbitmq.exchange.name}")
+    private String exchangeName;
+    @Value("${rabbitmq.routing.key}")
+    private String routingKey;
 
     /**
      * Tracks a new activity for a user.
@@ -51,6 +59,14 @@ public class ActivityService {
         logger.info("Saving activity to database: {}", activity);
         Activity savedActivity = activityRepository.save(activity);
         logger.info("Activity saved with id: {}", savedActivity.getId());
+        /**
+         *publish to AI for recommendation processing
+         */
+        try{
+            rabbitTemplate.convertAndSend(exchangeName,routingKey, savedActivity);
+        }catch (Exception e){
+                logger.error("Failed to publish activity to RabbitMQ : ", e);
+        }
         return  mapToResponse(savedActivity);
     }
 
