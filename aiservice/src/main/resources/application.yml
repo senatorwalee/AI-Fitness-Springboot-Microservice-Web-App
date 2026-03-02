@@ -6,6 +6,11 @@ spring:
       uri: mongodb://localhost:27017/fitnessrecommendations
       database: fitnessrecommendations
       uuid-representation: standard
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 server:
   port: 8084
@@ -16,3 +21,19 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+rabbitmq:
+  exchange:
+    name: fitness.exchange
+  queue:
+    name: activity.queue
+  routing:
+    key: activity.tracking
+
+gemini:
+  api:
+    # Full Gemini API URL including the model endpoint and generateContent action
+    # Format: https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=
+    url: ${GEMINI_API_URL}
+    # API key for authenticating with the Gemini API
+    key: ${GEMINI_API_KEY}
