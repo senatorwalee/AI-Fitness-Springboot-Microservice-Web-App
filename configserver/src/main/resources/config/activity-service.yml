@@ -2,9 +2,6 @@
 # Spring Boot application configuration for the Activity Service
 # -----------------------------------------------------------------------------
 spring:
-  application:
-    name: activity-service  # Name of this microservice for service discovery
-
   data:
     mongodb:
       uri: mongodb://localhost:27017/fitnessactivity  # MongoDB connection URI
