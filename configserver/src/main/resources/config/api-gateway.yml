@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: api-gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8086/realms/fitness-oauth2
+  cloud:
+    gateway:
+      # Enable discovery locator to automatically create routes for services
+      discovery:
+        locator:
+          enabled: false #if true, its auto creates the routes using the service names i.e /service-name/original-path
+          lower-case-service-id: true
+
+# Gateway + discovery debugging
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: DEBUG
+    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
+    org.springframework.cloud.client.discovery: DEBUG
+    com.netflix.discovery: INFO
+
+server:
+  port: 8085
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+  # Tell Eureka which health endpoint to use for this instance.
+  instance:
+    health-check-url-path: /actuator/health
+    status-page-url-path: /actuator/info
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    gateway:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+
+
