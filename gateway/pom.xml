@@ -55,6 +55,12 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Enables /actuator/health and /actuator/info so Eureka health checks don't flap. -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -87,6 +93,21 @@
 
 	<build>
 		<plugins>
+			<!-- Configure the maven-compiler-plugin to use Lombok's annotation processor -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.10.1</version>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>1.18.26</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

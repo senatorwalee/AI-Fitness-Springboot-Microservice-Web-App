@@ -22,7 +22,10 @@ public class User {
     @Id
     @GeneratedValue(strategy =  GenerationType.UUID)
     private UUID id;
-
+    /**
+     * Unique identifier for the user in keycloak.
+     */
+    private UUID keyCloakId;
     /**
      * The user's first name.
      */

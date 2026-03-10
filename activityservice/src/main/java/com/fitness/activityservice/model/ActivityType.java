@@ -13,5 +13,6 @@ public enum ActivityType {
     HIIT,         // High-intensity interval training
     CARDIO,       // Cardio activity
     STRECHING,    // Stretching activity
+    BOXING,
     OTHER         // Other activity types
 }

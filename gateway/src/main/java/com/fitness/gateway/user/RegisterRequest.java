@@ -1,15 +1,11 @@
-package com.fitness.userservice.dtos;
+package com.fitness.gateway.user;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jspecify.annotations.Nullable;
-
-import java.util.UUID;
 
 /**
  * Data Transfer Object (DTO) for user registration requests.
@@ -49,5 +45,5 @@ public class RegisterRequest {
     /**
      * Unique identifier for the user in keycloak.
      */
-    private UUID keyCloakId;
+    private  String keyCloakId;
 }

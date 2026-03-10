@@ -5,6 +5,7 @@ import com.fitness.userservice.dtos.UserResponse;
 import com.fitness.userservice.model.User;
 import com.fitness.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,17 +42,20 @@ public class UserService {
     public UserResponse register( RegisterRequest request) {
 
         if(repository.existsByEmail(request.getEmail())){
-                throw new RuntimeException("Email already exists");
+            User existingUser = repository.findByEmail(request.getEmail());
+            return getUserResponse(existingUser);
         }
         User user = new User();
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword())); // Hash the password
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
+        user.setKeyCloakId(request.getKeyCloakId());
         // Save the user to the database (you can use a repository for this)
         User savedUser = repository.save(user);
         UserResponse userResponse = new UserResponse();
         userResponse.setId(savedUser.getId());
+        userResponse.setKeyCloakId(savedUser.getKeyCloakId());
         userResponse.setEmail(savedUser.getEmail());
         userResponse.setFirstName(savedUser.getFirstName());
         userResponse.setLastName(savedUser.getLastName());
@@ -59,6 +63,18 @@ public class UserService {
         userResponse.setUpdatedAt(savedUser.getUpdatedAt());
         return userResponse;
 
+    }
+
+    private static UserResponse getUserResponse(User existingUser) {
+        UserResponse userResponse = new UserResponse();
+        userResponse.setId(existingUser.getId());
+        userResponse.setKeyCloakId(existingUser.getKeyCloakId());
+        userResponse.setEmail(existingUser.getEmail());
+        userResponse.setFirstName(existingUser.getFirstName());
+        userResponse.setLastName(existingUser.getLastName());
+        userResponse.setCreatedAt(existingUser.getCreatedAt());
+        userResponse.setUpdatedAt(existingUser.getUpdatedAt());
+        return userResponse;
     }
 
     /**
@@ -83,8 +99,9 @@ public class UserService {
 
     public boolean existByUserId(UUID userId){
         log.info("Calling User Validation API for userId: {}", userId);
-        return repository.existsById(userId);
+        return repository.existsByKeyCloakId(userId);
     }
+
 
 }
 

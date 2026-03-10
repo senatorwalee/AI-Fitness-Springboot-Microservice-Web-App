@@ -1,10 +1,6 @@
-package com.fitness.userservice.dtos;
+package com.fitness.gateway.user;
 
-import com.fitness.userservice.model.UserRole;
-import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,7 +18,7 @@ public class UserResponse {
     /**
      * Unique identifier for the user in keycloak.
      */
-    private UUID keyCloakId;
+    private String keyCloakId;
     /**
      * The user's first name.
      */

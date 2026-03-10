@@ -30,4 +30,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      */
     Optional<User> findById(UUID userId); //this is optional
 
+    boolean existsByKeyCloakId(UUID userId);
+
+    User findByEmail(String email);
 }
