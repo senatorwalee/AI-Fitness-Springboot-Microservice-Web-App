@@ -42,6 +42,16 @@ export const addActivity = async (activity) => {
   }
 };
 
+export const getActivity = async (activityId) => {
+  try {
+    const response = await api.get(`/activities/getActivity/${activityId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching activity:", error);
+    throw error;
+  }
+};
+
 export const getActivityDetail = async (activityId) => {
   try {
     const response = await api.get(`/ai/recommendations/activity/${activityId}`);

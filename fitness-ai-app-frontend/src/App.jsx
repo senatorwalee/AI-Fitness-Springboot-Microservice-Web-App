@@ -3,10 +3,21 @@ import {
   Navigate,
   Route,
   Routes,
-  useLocation,
 } from "react-router-dom";
-import { Button } from "@mui/material";
-import Box from "@mui/material/Box";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Container,
+  Box,
+  Card,
+  CardContent,
+  Avatar,
+} from "@mui/material";
+import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
+import LogoutIcon from "@mui/icons-material/Logout";
+import LoginIcon from "@mui/icons-material/Login";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "react-oauth2-code-pkce";
 import { useDispatch } from "react-redux";
@@ -15,62 +26,111 @@ import ActivityForm from "./components/ActivityForm";
 import ActivityList from "./components/ActivityList";
 import ActivityDetail from "./components/ActivityDetail";
 
+/* ── Activities dashboard (form + list) ─────────────────────── */
 const ActivitiesPage = () => {
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (
-    <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-      <ActivityForm onActivitiesAdded={() => setRefreshKey(k => k + 1)} />
+    <Box sx={{ mt: 3 }}>
+      <ActivityForm onActivitiesAdded={() => setRefreshKey((k) => k + 1)} />
       <ActivityList refreshKey={refreshKey} />
     </Box>
   );
 };
 
-// Root application component. Responsible for wiring authentication state
-// from the OAuth library into the Redux store so the rest of the app can
-// access the current user and token via `state.auth`.
+/* ── Root App component ─────────────────────────────────────── */
 function App() {
-  // `AuthContext` is provided by `react-oauth2-code-pkce` and exposes the
-  // current token, parsed token data, and helpers to log in/out.
-  const { token, tokenData, logIn, logOut, isAuthenticated } =
+  const { token, tokenData, logIn, logOut } =
     useContext(AuthContext);
-
-  // Local UI state to indicate we've synchronized auth information into Redux
-  // (e.g. so downstream components can wait for auth to be ready).
-  const [authReady, setAuthReady] = useState(false);
-
   const dispatch = useDispatch();
 
-  // Whenever a token becomes available or changes, write relevant pieces
-  // of authentication info into the Redux `auth` slice. `tokenData` usually
-  // contains the decoded ID token claims (user profile information).
   useEffect(() => {
     if (token) {
-      // setCredentials expects an object like { token, user }
       dispatch(setCredentials({ token, user: tokenData }));
-      setAuthReady(true);
     }
   }, [token, tokenData, dispatch]);
 
-  // show protected screens based on `isAuthenticated` or `authReady`.
+  /* ── Unauthenticated: centered login card ───────────────── */
+  if (!token) {
+    return (
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Card
+          sx={{
+            maxWidth: 420,
+            width: "100%",
+            mx: 2,
+            textAlign: "center",
+            py: 4,
+            px: 3,
+          }}
+        >
+          <CardContent>
+            <Avatar
+              sx={{
+                bgcolor: "primary.main",
+                width: 64,
+                height: 64,
+                mx: "auto",
+                mb: 2,
+              }}
+            >
+              <FitnessCenterIcon sx={{ fontSize: 36 }} />
+            </Avatar>
+            <Typography variant="h4" gutterBottom>
+              AI Fitness
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+              Track your workouts and get personalized AI recommendations
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              fullWidth
+              startIcon={<LoginIcon />}
+              onClick={() => logIn()}
+            >
+              Sign In
+            </Button>
+          </CardContent>
+        </Card>
+      </Box>
+    );
+  }
+
+  /* ── Authenticated: AppBar + routed content ─────────────── */
   return (
     <Router>
-      {!token ? (
-        <Button variant="contained" onClick={() => logIn()}>
-          Login
-        </Button>
-      ) : (
-        // <div>
-        // <pre>{JSON.stringify(tokenData, null,2)}</pre>
-        // </div>
-        <Box component="section" sx={{ p: 2, border: "1px dashed grey" }}>
-          <Routes>
+      <AppBar position="sticky" elevation={0}>
+        <Toolbar>
+          <FitnessCenterIcon sx={{ mr: 1.5 }} />
+          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>
+            AI Fitness
+          </Typography>
+          <Button
+            color="inherit"
+            startIcon={<LogoutIcon />}
+            onClick={() => logOut()}
+            sx={{ textTransform: "none" }}
+          >
+            Logout
+          </Button>
+        </Toolbar>
+      </AppBar>
+
+      <Container maxWidth="lg" sx={{ py: 3 }}>
+        <Routes>
           <Route path="/activities" element={<ActivitiesPage />} />
           <Route path="/activities/:id" element={<ActivityDetail />} />
-          <Route path="/" element={token? <Navigate to="/activities" replace /> : <div>Welcome Please login.</div>} />
-          </Routes>
-        </Box>
-      )}
+          <Route path="/" element={<Navigate to="/activities" replace />} />
+        </Routes>
+      </Container>
     </Router>
   );
 }

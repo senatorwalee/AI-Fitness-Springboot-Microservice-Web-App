@@ -1,0 +1,173 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: aifitness-postgres
+    environment:
+      POSTGRES_DB: fitness_user_db
+      POSTGRES_USER: fitness
+      POSTGRES_PASSWORD: fitness
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fitness -d fitness_user_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  mongodb:
+    image: mongo:7
+    container_name: aifitness-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: aifitness-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  configserver:
+    image: olawale99/configserver:latest
+    build:
+      context: ./configserver
+    container_name: aifitness-configserver
+    restart: on-failure
+    environment:
+      SERVER_PORT: 8080
+    ports:
+      - "8090:8080"
+
+  eureka:
+    image: olawale99/eureka:latest
+    build:
+      context: ./eureka
+    container_name: aifitness-eureka
+    restart: on-failure
+    environment:
+      SERVER_PORT: 8080
+    ports:
+      - "8092:8080"
+
+  userservice:
+    image: olawale99/userservice:latest
+    build:
+      context: ./userservice
+    container_name: aifitness-userservice
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+      configserver:
+        condition: service_started
+      eureka:
+        condition: service_started
+    environment:
+      SERVER_PORT: 8080
+      CONFIG_SERVER_URL: http://configserver:8080
+      EUREKA_DEFAULT_ZONE: http://eureka:8080/eureka/
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fitness_user_db
+      SPRING_DATASOURCE_USERNAME: fitness
+      SPRING_DATASOURCE_PASSWORD: fitness
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+    ports:
+      - "8091:8080"
+
+  activityservice:
+    image: olawale99/activityservice:latest
+    build:
+      context: ./activityservice
+    container_name: aifitness-activityservice
+    restart: on-failure
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      configserver:
+        condition: service_started
+      eureka:
+        condition: service_started
+    environment:
+      SERVER_PORT: 8080
+      MONGODB_URI: mongodb://mongodb:27017/fitnessactivity
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+      EUREKA_DEFAULT_ZONE: http://eureka:8080/eureka/
+    ports:
+      - "8087:8080"
+
+  aiservice:
+    image: olawale99/aiservice:latest
+    build:
+      context: ./aiservice
+    container_name: aifitness-aiservice
+    restart: on-failure
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      configserver:
+        condition: service_started
+      eureka:
+        condition: service_started
+    environment:
+      SERVER_PORT: 8080
+      MONGODB_URI: mongodb://mongodb:27017/fitnessrecommendations
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+      EUREKA_DEFAULT_ZONE: http://eureka:8080/eureka/
+      GEMINI_API_URL: ${GEMINI_API_URL:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    ports:
+      - "8088:8080"
+
+  gateway:
+    image: olawale99/gateway:latest
+    build:
+      context: ./gateway
+    container_name: aifitness-gateway
+    restart: on-failure
+    depends_on:
+      configserver:
+        condition: service_started
+      eureka:
+        condition: service_started
+      userservice:
+        condition: service_started
+      activityservice:
+        condition: service_started
+      aiservice:
+        condition: service_started
+    environment:
+      SERVER_PORT: 8080
+      CONFIG_SERVER_URL: http://configserver:8080
+      EUREKA_DEFAULT_ZONE: http://eureka:8080/eureka/
+      KEYCLOAK_ISSUER_URI: http://host.docker.internal:8086/realms/fitness-oauth2
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8089:8080"
+
+volumes:
+  postgres-data:
+  mongodb-data:

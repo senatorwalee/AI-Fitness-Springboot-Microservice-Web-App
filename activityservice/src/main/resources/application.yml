@@ -7,21 +7,21 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/fitnessactivity  # MongoDB connection URI
+      uri: ${MONGODB_URI:mongodb://localhost:27017/fitnessactivity}  # MongoDB connection URI
       database: fitnessactivity                      # Database name
       uuid-representation : standard                 # Use standard UUID representation
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
 server:
   port: 8083  # Port on which the Activity Service runs
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/  # Eureka server URL for service registration
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:8761/eureka/}  # Eureka server URL for service registration
 
 rabbitmq:
   exchange:
