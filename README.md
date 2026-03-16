@@ -250,3 +250,54 @@ All requests go through the gateway at `http://localhost:8085`.
 ## 📝 License
 
 MIT
+
+## 🐳 Multi-Arch Image Publish
+
+To publish all six application images for both `linux/amd64` and `linux/arm64` in one command:
+
+```bash
+make docker-publish
+```
+
+What this does:
+- creates or reuses a `buildx` builder named `multiarch-builder`
+- builds `activityservice`, `aiservice`, `configserver`, `eureka`, `gateway`, and `userservice`
+- pushes multi-platform images to Docker Hub under `olawale99/*:latest`
+
+Prerequisite:
+
+```bash
+docker login
+```
+
+If you want a local single-architecture build loaded into your Docker engine instead of pushing:
+
+```bash
+make docker-publish-load
+```
+
+## 🚀 Ubuntu Deploy From Docker Hub
+
+Use [compose.deploy.yaml](/Users/olawaletijani/Documents/Personal/AIFitnessAppMicroservice/compose.deploy.yaml) on the Ubuntu server when you want to pull published images instead of building locally.
+
+Basic flow:
+
+```bash
+docker login
+docker compose -f compose.deploy.yaml pull
+docker compose -f compose.deploy.yaml up -d
+docker compose -f compose.deploy.yaml ps
+```
+
+If you update the Docker Hub images later:
+
+```bash
+docker compose -f compose.deploy.yaml pull
+docker compose -f compose.deploy.yaml up -d
+```
+
+Notes:
+- this file uses `pull_policy: always` for the app images under `olawale99/*`
+- it does not contain any `build:` sections, so the server will not try to build the services from source
+- if Keycloak is not running on the same host, set `KEYCLOAK_ISSUER_URI` before starting the stack
+- if AI recommendations are enabled, set `GEMINI_API_URL` and `GEMINI_API_KEY` before starting the stack
