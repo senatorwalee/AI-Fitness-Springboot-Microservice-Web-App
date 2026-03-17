@@ -21,33 +21,33 @@ jobs:
 
       - name: Build and push configserver
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/configserver:latest ./configserver
-          docker push ${{ secrets.DOCKER_USERNAME }}/configserver:latest
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME  }}/configserver:latest ./configserver
+          docker push ${{ secrets.DOCKERHUB_USERNAME  }}/configserver:latest
 
       - name: Build and push eureka
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/eureka:latest ./eureka
-          docker push ${{ secrets.DOCKER_USERNAME }}/eureka:latest
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME  }}/eureka:latest ./eureka
+          docker push ${{ secrets.DOCKERHUB_USERNAME  }}/eureka:latest
 
       - name: Build and push gateway
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/gateway:latest ./gateway
-          docker push ${{ secrets.DOCKER_USERNAME }}/gateway:latest
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME  }}/gateway:latest ./gateway
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest
 
       - name: Build and push userservice
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/userservice:latest ./userservice
-          docker push ${{ secrets.DOCKER_USERNAME }}/userservice:latest
+          docker build -t ${{ secrets.DDOCKERHUB_USERNAME }}/userservice:latest ./userservice
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/userservice:latest
 
       - name: Build and push activityservice
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/activityservice:latest ./activityservice
-          docker push ${{ secrets.DOCKER_USERNAME }}/activityservice:latest
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME  }}/activityservice:latest ./activityservice
+          docker push ${{ secrets.DOCKERHUB_USERNAME  }}/activityservice:latest
 
       - name: Build and push aiservice
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/aiservice:latest ./aiservice
-          docker push ${{ secrets.DOCKER_USERNAME }}/aiservice:latest
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME  }}/aiservice:latest ./aiservice
+          docker push ${{ secrets.DOCKERHUB_USERNAME  }}/aiservice:latest
 
   deploy:
     needs: build-and-push
