@@ -1,0 +1,65 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and push configserver
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/configserver:latest ./configserver
+          docker push ${{ secrets.DOCKER_USERNAME }}/configserver:latest
+
+      - name: Build and push eureka
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/eureka:latest ./eureka
+          docker push ${{ secrets.DOCKER_USERNAME }}/eureka:latest
+
+      - name: Build and push gateway
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/gateway:latest ./gateway
+          docker push ${{ secrets.DOCKER_USERNAME }}/gateway:latest
+
+      - name: Build and push userservice
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/userservice:latest ./userservice
+          docker push ${{ secrets.DOCKER_USERNAME }}/userservice:latest
+
+      - name: Build and push activityservice
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/activityservice:latest ./activityservice
+          docker push ${{ secrets.DOCKER_USERNAME }}/activityservice:latest
+
+      - name: Build and push aiservice
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/aiservice:latest ./aiservice
+          docker push ${{ secrets.DOCKER_USERNAME }}/aiservice:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server using SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/olawale/ai-fitness-app
+            docker compose -f compose.deploy.yaml pull
+            docker compose -f compose.deploy.yaml up -d
+            docker image prune -f
