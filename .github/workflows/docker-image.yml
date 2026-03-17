@@ -36,7 +36,7 @@ jobs:
 
       - name: Build and push userservice
         run: |
-          docker build -t ${{ secrets.DDOCKERHUB_USERNAME }}/userservice:latest ./userservice
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/userservice:latest ./userservice
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/userservice:latest
 
       - name: Build and push activityservice
