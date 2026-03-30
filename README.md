@@ -57,7 +57,7 @@ A full-stack AI-powered fitness tracking application built with **Spring Boot mi
 ## 🛠️ Tech Stack
 
 **Backend**
-- Java 21 / Spring Boot 3
+- Java 17 / Spring Boot 3
 - Spring Cloud Gateway, Eureka, Config Server
 - Spring Data MongoDB
 - Spring AMQP (RabbitMQ)
